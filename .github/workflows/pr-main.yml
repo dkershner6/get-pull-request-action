@@ -18,7 +18,7 @@ jobs:
       
       # Optionally fail the workflow, should you choose
       - name: Fail on failure
-        if: ${{ fromJSON(steps.get-pr.outputs.pr).number != github.event.issue.number }}
+        if: ${{ fromJSON(steps.get-pr.outputs.pr).number != github.event.pull_request.number }}
         run: 'echo "Not Correct Answer :/" && exit 1'
         
   test: # make sure the action works on a clean machine without building
