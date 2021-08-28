@@ -6,15 +6,18 @@ branding:
   color: orange
 
 inputs:
+  github-token:
+    description: The token to use, if fetching from another repo, use a PAT or similar.
+    required: true
   repo-owner:
-    description: "The value to be returned if no conditionals match"
-    required: true
+    description: "The owner for the repo where the pull request lives, defaults to context.repo.owner (the current repo)"
+    required: false
   repo-name:
-    description: "A newline delimited conditional array, split by an arrow (=>)"
-    required: true
+    description: "The name of the repo where the pull request lives, defaults to context.repo.repo (the current repo)"
+    required: false
   pull-number:
-    description: "The number of the pull request to fetch"
-    required: true
+    description: "The number of the pull request to fetch, defaults to context.issue.number"
+    required: false
     
 outputs:
   pr:
@@ -24,16 +27,26 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - run: echo PR Number Input - ${{ inputs.pull-number }}
+      shell: bash
     - uses: actions/github-script@v3
       id: get-pr
+      env:
+        REPO_OWNER: ${{ inputs.repo-owner }}
+        REPO_NAME: ${{ inputs.repo-name }}
+        PULL_NUMBER: ${{ inputs.pull-number }}
       with:
+        github-token: ${{ inputs.github-token }}
         script: |
+          const repoOwner = process.env.REPO_OWNER;
+          const repoName = process.env.REPO_NAME;
+          const pullNumber = process.env.PULL_NUMBER;
           const request = {
-            owner: inputs.repo-owner,
-            repo: inputs.repo-name,
-            pull_number: inputs.pull-number
+            owner: repoOwner && repoOwner.length > 0 ? repoOwner : context.repo.owner,
+            repo: repoName && repoName.length > 0 ? repoName : context.repo.repo,
+            pull_number: pullNumber && pullNumber.length > 0 ? Number(pullNumber) : context.issue.number
           };
-          core.info(`Getting PR #${inputs.pull-number} from ${inputs.repo-owner}/${inputs.repo-name}`);
+          core.info(`Getting PR #${request.pull_number} from ${request.owner}/${request.repo}`);
           try {
             const result = await github.pulls.get(request);
             return result.data;
