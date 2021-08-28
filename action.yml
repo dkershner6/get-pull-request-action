@@ -1,0 +1,42 @@
+name: 'Get Pull Request'
+description: 'This action fetches a pull request based on simple inputs for use in non pull request triggers'
+
+branding:
+  icon: git-pull-request
+  color: orange
+
+inputs:
+  repo-owner:
+    description: "The value to be returned if no conditionals match"
+    required: true
+  repo-name:
+    description: "A newline delimited conditional array, split by an arrow (=>)"
+    required: true
+  pull-number:
+    description: "The number of the pull request to fetch"
+    required: true
+    
+outputs:
+  pr:
+    description: "The pull request, in JSON format"
+    value: ${{ steps.get-pr.outputs.result }}
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/github-script@v3
+      id: get-pr
+      with:
+        script: |
+          const request = {
+            owner: inputs.repo-owner,
+            repo: inputs.repo-name,
+            pull_number: inputs.pull-number
+          };
+          core.info(`Getting PR #${inputs.pull-number} from ${inputs.repo-owner}/${inputs.repo-name}`);
+          try {
+            const result = await github.pulls.get(request);
+            return result.data;
+          } catch (err) {
+            core.setFailed(`Request failed with error ${err}`);
+          }
