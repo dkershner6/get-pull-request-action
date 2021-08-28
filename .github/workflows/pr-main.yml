@@ -5,6 +5,22 @@ on:
       - main
 
 jobs:
+  test-defaults: # make sure the action works on a clean machine without building
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: ./
+        id: get-pr
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - run: echo ${{ fromJSON(steps.get-pr.outputs.pr).title }}
+      
+      # Optionally fail the workflow, should you choose
+      - name: Fail on failure
+        if: ${{ fromJSON(steps.get-pr.outputs.pr).number != github.event.issue.number }}
+        run: 'echo "Not Correct Answer :/" && exit 1'
+        
   test: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
     steps:
