@@ -11,8 +11,6 @@ jobs:
       - uses: ./
         id: get-pr
         with:
-          repo-owner: ${{ context.repo.owner }}
-          repo-name: ${{ context.repo.repo }}
           pull-number: 1
           
       - run: echo ${{ fromJSON(steps.get-pr.outputs.result).title }}
