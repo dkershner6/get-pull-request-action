@@ -4,25 +4,13 @@ This action fetches a pull request based on simple inputs for use in non pull re
 
 ## Usage
 
-Simplest Possible Use:
+Simplest Possible Use (This works from an issue_comment trigger for a pull request):
 
 ```yml
       - uses: dkershner6/get-pull-request-action@v1
         id: get-pr
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          
-      - run: echo ${{ fromJSON(steps.get-pr.outputs.pr).title }} # Make sure to use the fromJSON filter
-```
-
-To Use from a Pull Request Comment (issue_comment) Trigger:
-
-```yml
-      - uses: dkershner6/get-pull-request-action@v1
-        id: get-pr
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          pull_number: ${{ github.event.issue.number }}
           
       - run: echo ${{ fromJSON(steps.get-pr.outputs.pr).title }} # Make sure to use the fromJSON filter
 ```
