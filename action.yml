@@ -18,10 +18,10 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - run: echo PR Number Input - ${{ inputs.pull-number }}
+      shell: bash
     - uses: actions/github-script@v3
       id: get-pr
-      env:
-        PULL_NUMBER: ${{ inputs.pull-number }}
       with:
         script: |
           const pullNumber = process.env.PULL_NUMBER;
