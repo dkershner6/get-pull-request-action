@@ -12,6 +12,7 @@ jobs:
       - uses: ./
         id: get-pr
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           pull-number: 1
           
       - run: echo ${{ fromJSON(steps.get-pr.outputs.pr).title }}
