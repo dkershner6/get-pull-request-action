@@ -6,12 +6,6 @@ branding:
   color: orange
 
 inputs:
-  repo-owner:
-    description: "The value to be returned if no conditionals match"
-    required: true
-  repo-name:
-    description: "A newline delimited conditional array, split by an arrow (=>)"
-    required: true
   pull-number:
     description: "The number of the pull request to fetch"
     required: true
@@ -29,11 +23,11 @@ runs:
       with:
         script: |
           const request = {
-            owner: inputs.repo-owner,
-            repo: inputs.repo-name,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
             pull_number: inputs.pull-number
           };
-          core.info(`Getting PR #${inputs.pull-number} from ${inputs.repo-owner}/${inputs.repo-name}`);
+          core.info(`Getting PR #${inputs.pull-number} from ${context.repo.owner}/${context.repo.repo}`);
           try {
             const result = await github.pulls.get(request);
             return result.data;
