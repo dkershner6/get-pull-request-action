@@ -20,12 +20,15 @@ runs:
   steps:
     - uses: actions/github-script@v3
       id: get-pr
+      env:
+        PULL_NUMBER: ${{ inputs.pull-number }}
       with:
         script: |
+          const pullNumber = process.env.PULL_NUMBER;
           const request = {
             owner: context.repo.owner,
             repo: context.repo.repo,
-            pull_number: inputs.pull-number
+            pull_number: pullNumber && pullNumber.length > 0 ? Number(pullNumber) : context.issue.number
           };
           core.info(`Getting PR #${inputs.pull-number} from ${context.repo.owner}/${context.repo.repo}`);
           try {
