@@ -29,7 +29,7 @@ runs:
   steps:
     - run: echo PR Number Input - ${{ inputs.pull-number }}
       shell: bash
-    - uses: actions/github-script@v3
+    - uses: actions/github-script@v6
       id: get-pr
       env:
         REPO_OWNER: ${{ inputs.repo-owner }}
